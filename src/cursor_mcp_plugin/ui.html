@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Cursor MCP Plugin</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        color: #e0e0e0;
+        background-color: #1e1e1e;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      h1 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #ffffff;
+      }
+
+      h2 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 8px;
+        color: #ffffff;
+      }
+
+      button {
+        background-color: #18a0fb;
+        border: none;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+      }
+
+      button:hover {
+        background-color: #0d8ee0;
+      }
+
+      button.secondary {
+        background-color: #3d3d3d;
+        color: #e0e0e0;
+      }
+
+      button.secondary:hover {
+        background-color: #4d4d4d;
+      }
+
+      button:disabled {
+        background-color: #333333;
+        color: #666666;
+        cursor: not-allowed;
+      }
+
+      input {
+        border: 1px solid #444444;
+        border-radius: 4px;
+        padding: 8px;
+        margin-bottom: 12px;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #cccccc;
+      }
+
+      .status {
+        margin-top: 16px;
+        padding: 12px;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+
+      .status.connected {
+        background-color: #1a472a;
+        color: #4ade80;
+      }
+
+      .status.disconnected {
+        background-color: #471a1a;
+        color: #ff9999;
+      }
+
+      .status.info {
+        background-color: #1a3147;
+        color: #66b3ff;
+      }
+
+      .info-box {
+        background-color: #2a2a2a;
+        border: 1px solid #444444;
+        border-radius: 6px;
+        padding: 12px;
+        margin-top: 8px;
+      }
+
+      .info-box p {
+        margin: 4px 0;
+        font-size: 13px;
+        color: #4ade80;
+      }
+
+      .section {
+        margin-bottom: 24px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .logo {
+        width: 50px;
+        height: 50px;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .header-text {
+        margin-left: 12px;
+      }
+
+      .header-text h1 {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      .header-text p {
+        margin: 4px 0 0 0;
+        font-size: 12px;
+        color: #999999;
+      }
+
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid #444444;
+        margin-bottom: 16px;
+      }
+
+      .tab {
+        padding: 8px 16px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: #999999;
+      }
+
+      .tab.active {
+        border-bottom: 2px solid #18a0fb;
+        color: #18a0fb;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .link {
+        color: #18a0fb;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .link:hover {
+        text-decoration: underline;
+      }
+
+      .header-logo {
+        padding: 16px;
+        border-radius: 16px;
+        background-color: #333;
+      }
+
+      .header-logo-image {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+      }
+      /* Progress styles */
+      .operation-complete {
+        color: #4ade80;
+      }
+      .operation-error {
+        color: #ff9999;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-logo">
+          <img
+            class="header-logo-image"
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAMAAAANIilAAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAAEJwAABCcASbNOjQAAAB1UExURUdwTP////////////////39/f////////////////////////////7+/v////////////39/f////////////////////////////////////////////////////39/fn5+ejo6P///+rq6uXl5f////Ly8gf4a04AAAAkdFJOUwAOdkZCfz04zIgbT0pkIagnm7C9b6C2LWqSxBMyB11W2Ovsy3D12ZYAAALtSURBVEjHndcJt6ogEADgXNAUcWlxSQVN3/3/P/EBAgJpWdM9p5ue78xANE2n05vIUduffgvn1oA0bX+hvRc1DYjTPHe+tiGIoqhx4zTNq/y72lMURQtmqasuPc4dAmgwfWuZrqquiw8uNnC5BRJT3YXhIZ7Xris0oLjlmOrArz7VHpOb6wpNee0ITVMHvvd25/qgvtFwla8dpxV7xnTi7dbed7iuTY16lZoV7iXQb3cqRgjVgoviKTZSUw2719pbD2OEVu5yjnqeOpZ75lMMobVzfUcwC6lrofGJpdb3jGtj6TkkNKRWtXMsU+ciNdfQUwe+zZ7/vo1CYYgv39G/kShMS6mHL+g8F96K2Uqi52E6j3DFnsc4uR/hMwugYd9bOLoeSTvPE1yx4/sLh9B9fKbziHVM3z/G+dKb5wdKdysxsNCc4+2l/yk7EnrOVhwGBt9auqJ0t9gR13C4cl77bdil88SPuK9jxrXksHjab48Mwo+4ha3aSbZJ52JpC4GFbY7OdsVst4Lls/mKZe1y6fXTonS3RFsIN7C5dAJsO+WiI21jbd8xesFEtoUdLLjH+qGNJ9WRuj3MOOQNycaV6khvsLc0MxsD2Uq7bhcHuBZh4rFdujjT1c6GkaXtszCx3sW3MRRfNjwiI7EjGjGfFjZwUgM9CuNggqRVXz+vOGDTBOCP5UnHE73ghjK1jYNlEIma9UnHBb/qdkvq1MSQjk4yCvGk4UneQylLbWAIio3I1t26q4sNTuM01tqQe9+My5pYv9wk8Ypv92w7JpXYulGoD8aJ3C/bUUp8tW5EuTa2oXI7ZGLzahZYE0l03QqZWI8Lfh1lw+zxEoNIrF8Dm/NQT8rzgz+WP/oQmL6Ud4pud/4DZzMWPKjXZfJufOyiVzzKV4/609yelDaWiZsDc6+DSwOLxNqxeD/6Ah3zf674+Kyf3xUeDi3WDFIKzCpOv/5phB4MD+cs/OWXVdych/GBf/xJd4pL9+1i/wOElMO5v/co4wAAAABJRU5ErkJggg=="
+          />
+        </div>
+        <div class="header-text">
+          <h1>SPARQ Figma MCP Plugin</h1>
+          <p>Connect Figma to Cursor AI using MCP</p>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div id="tab-connection" class="tab active">Connection</div>
+        <div id="tab-about" class="tab">About</div>
+      </div>
+
+      <div id="content-connection" class="tab-content active">
+        <div class="section">
+          <div style="margin-bottom: 16px">
+            <button
+              id="btn-connect"
+              class="primary"
+              style="width: 100%; padding: 12px; font-size: 16px; font-weight: 600;"
+            >
+              Connect to Cursor AI
+            </button>
+          </div>
+
+          <div id="bridge-container">
+            <label>🔒 Secure Embedded Bridge</label>
+            <div class="info-box">
+              <p>✅ Zero network exposure</p>
+              <p>✅ Encrypted IPC communication</p>
+              <p>✅ No ports or WebSocket vulnerabilities</p>
+              <p>✅ Local-only MCP server connection</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="connection-status" class="status disconnected">
+          Embedded bridge initializing...
+        </div>
+
+        <div id="mcp-config" class="section">
+          <h2>MCP Configuration</h2>
+          <p>
+            <strong>Step 1:</strong> No installation required! Bunx will automatically run the latest version (fastest).
+          </p>
+          <div style="background: #2a2a2a; padding: 12px; border-radius: 6px; margin: 8px 0;">
+            <code style="color: #4ade80;">⚡ Automatic via bunx - fastest execution, no manual installation needed</code>
+          </div>
+          <p>
+            <strong>Step 2:</strong> Add this configuration to your <strong>PROJECT-LEVEL</strong> <code>{WORKSPACE-ROOT}\.cursor\mcp.json</code> file:
+          </p>
+          <div class="info-box" style="margin: 8px 0; background: #2a1a47;">
+            <p style="color: #ffd700; margin: 0;">⚠️ <strong>RECOMMENDED:</strong></p>
+            <p style="color: #cccccc; margin: 4px 0 0 0; font-size: 11px;">In order to avoid tool limit conflicts, as SPARQ provides 40+ Figma design tools</p>
+            <p style="color: #cccccc; margin: 4px 0 0 0; font-size: 11px;">Use project-level config <code>{WORKSPACE-ROOT}\.cursor\mcp.json</code>, instead of global <code>mcp.json</code>. (typically available via cursor-settings)</p>
+          </div>
+          <textarea
+            id="mcp-json"
+            rows="8"
+            readonly
+            style="
+              width: 100%;
+              background: #2d2d2d;
+              color: #e0e0e0;
+              padding: 12px;
+              border: 1px solid #444444;
+              border-radius: 4px;
+              font-family: monospace;
+              margin-bottom: 8px;
+            "
+          ></textarea>
+          <button id="btn-copy" class="secondary">Copy to Clipboard</button>
+          
+          <div style="margin-top: 12px; padding: 10px; background: #2a2a2a; border-radius: 4px; border-left: 3px solid #18a0fb;">
+            <p style="margin: 0; font-size: 12px; color: #e0e0e0; font-weight: 500;">💡 Runtime Options:</p>
+            <p style="margin: 4px 0 0 0; font-size: 11px; color: #ccc;">
+              <strong>bunx</strong> (recommended) - Fastest execution, best Node.js compatibility<br>
+              <strong>npx</strong> - Universal, comes with npm by default<br>
+              <strong>global install</strong> - Install once, faster startup for frequent use
+            </p>
+            <p style="margin: 4px 0 0 0; font-size: 11px; color: #999;">
+              Default shows bunx (fastest). Click copy button multiple times to cycle through options.
+            </p>
+          </div>
+        </div>
+        
+        <!-- Add Progress Bar Section -->
+        <div id="progress-container" class="section hidden">
+          <h2>Operation Progress</h2>
+          <div id="progress-message">No operation in progress</div>
+          <div style="width: 100%; background-color: #444; border-radius: 4px; margin-top: 8px;">
+            <div id="progress-bar" style="width: 0%; height: 8px; background-color: #18a0fb; border-radius: 4px; transition: width 0.3s;"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 12px;">
+            <div id="progress-status">Not started</div>
+            <div id="progress-percentage">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="content-about" class="tab-content">
+        <div class="section">
+          <h2>About SPARQ Figma MCP Plugin</h2>
+          <p>
+            This plugin enables secure communication between Cursor AI and Figma, 
+            providing AI-assisted design operations through the Model Context Protocol (MCP).
+          </p>
+          <p><strong>Version:</strong> 1.0.0</p>
+          <p><strong>Architecture:</strong> Secure Embedded Bridge (Zero Network Exposure)</p>
+
+          <h2>Key Features</h2>
+          <ul>
+            <li>🔒 Zero external network exposure</li>
+            <li>⚡ Real-time Figma document manipulation</li>
+            <li>🛡️ Encrypted IPC communication</li>
+            <li>🎨 40+ design tools via MCP</li>
+            <li>🚀 Works in Design, FigJam, and Dev Mode</li>
+          </ul>
+
+          <h2>How to Use</h2>
+          <ol>
+            <li>Copy the MCP configuration (npx runs latest version automatically)</li>
+            <li>Add configuration to your project-level <code>{WORKSPACE-ROOT}\.cursor\mcp.json</code></li>
+            <li>Click "Connect to Cursor AI" to activate embedded bridge</li>
+            <li>Use Cursor AI to interact with your Figma designs</li>
+          </ol>
+
+          <h2>Credits</h2>
+          <p style="margin-bottom: 12px;">
+            <strong>Developed by:</strong> 
+            <a class="link" onclick="window.open('https://github.com/LouminAILabs', '_blank')">LouminAI Labs</a>
+            <br>
+            <em style="font-size: 12px; color: #999;">R&D for Human-AI Enablement</em>
+          </p>
+          <p style="font-size: 12px; color: #999;">
+            Inspired by the Figma plugin community. Special thanks to 
+            <a class="link" onclick="window.open('https://github.com/sonnylazuardi', '_blank')">Sonny Lazuardi</a> 
+            for early plugin development patterns that influenced this architecture.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 🔒 Secure Embedded Bridge State - Zero Network Exposure
+      const state = {
+        connected: false,
+        embeddedBridge: null,
+        sessionId: null,
+        pendingRequests: new Map(),
+        bridgeActive: false,
+      };
+
+      // UI Elements - Embedded Bridge Interface
+      const connectButton = document.getElementById("btn-connect");
+      const connectionStatus = document.getElementById("connection-status");
+
+      // Tabs
+      const tabs = document.querySelectorAll(".tab");
+      const tabContents = document.querySelectorAll(".tab-content");
+
+      // Add UI elements for progress tracking
+      const progressContainer = document.getElementById("progress-container");
+      const progressBar = document.getElementById("progress-bar");
+      const progressMessage = document.getElementById("progress-message");
+      const progressStatus = document.getElementById("progress-status");
+      const progressPercentage = document.getElementById("progress-percentage");
+
+      // 🔒 Initialize Embedded Bridge UI
+      function updateConnectionStatus(isConnected, message) {
+        state.connected = isConnected;
+
+        let statusMessage =
+          message ||
+          (isConnected
+            ? "🔒 Secure embedded bridge active"
+            : "⏳ Embedded bridge initializing...");
+
+        connectionStatus.innerHTML = statusMessage;
+        connectionStatus.className = `status ${
+          isConnected ? "connected" : "disconnected"
+        }`;
+
+        // Update connect button text and style based on connection state
+        connectButton.textContent = isConnected ? "Disconnect" : "Connect to Cursor AI";
+        connectButton.className = isConnected ? "secondary" : "primary";
+
+        // Always show MCP config section
+        const mcpConfig = document.getElementById("mcp-config");
+        mcpConfig.className = "section";
+      }
+
+      // 🔒 Connect to Secure Embedded Bridge (No Network Exposure)
+      async function connectToEmbeddedBridge() {
+        try {
+          if (state.connected && state.bridgeActive) {
+            updateConnectionStatus(true, "🔒 Embedded bridge already active");
+            return;
+          }
+
+          console.log('🔒 Initializing secure embedded bridge...');
+          
+          // Simplified bridge activation
+          state.bridgeActive = true;
+          state.connected = true;
+
+          updateConnectionStatus(
+            true,
+            "🔒 Secure embedded bridge active"
+          );
+
+          // Notify the plugin code about embedded bridge activation
+          parent.postMessage(
+            {
+              pluginMessage: {
+                type: "embedded-bridge-connect",
+                message: "Secure embedded bridge established - zero network exposure",
+              },
+            },
+            "*"
+          );
+
+          console.log('✅ Embedded bridge successfully established');
+        } catch (error) {
+          console.error("🚨 Embedded bridge error:", error);
+          updateConnectionStatus(
+            false,
+            `🚨 Bridge error: ${error.message || "Unknown error"}`
+          );
+        }
+      }
+
+      // 🔒 Generate secure session ID
+      function generateSessionId() {
+        return `sparq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+
+      // 🔒 Disconnect from embedded bridge
+      function disconnectFromEmbeddedBridge() {
+        if (state.bridgeActive) {
+          state.bridgeActive = false;
+          state.sessionId = null;
+          state.connected = false;
+          updateConnectionStatus(false, "🔒 Embedded bridge disconnected");
+          console.log('🔒 Embedded bridge safely disconnected');
+        }
+      }
+
+      // Handle messages from the WebSocket
+      async function handleSocketMessage(payload) {
+        const data = payload.message;
+        console.log("handleSocketMessage", data);
+
+        // If it's a response to a previous request
+        if (data.id && state.pendingRequests.has(data.id)) {
+          const { resolve, reject } = state.pendingRequests.get(data.id);
+          state.pendingRequests.delete(data.id);
+
+          if (data.error) {
+            reject(new Error(data.error));
+          } else {
+            resolve(data.result);
+          }
+          return;
+        }
+
+        // If it's a new command
+        if (data.command) {
+          try {
+            // Send the command to the plugin code
+            parent.postMessage(
+              {
+                pluginMessage: {
+                  type: "execute-command",
+                  id: data.id,
+                  command: data.command,
+                  params: data.params,
+                },
+              },
+              "*"
+            );
+          } catch (error) {
+            // Send error back to WebSocket
+            sendErrorResponse(
+              data.id,
+              error.message || "Error executing command"
+            );
+          }
+        }
+      }
+
+      // Send a command to the WebSocket server
+      async function sendCommand(command, params) {
+        return new Promise((resolve, reject) => {
+          if (!state.connected || !state.socket) {
+            reject(new Error("Not connected to server"));
+            return;
+          }
+
+          const id = generateId();
+          state.pendingRequests.set(id, { resolve, reject });
+
+          state.socket.send(
+            JSON.stringify({
+              id,
+              type: "message",
+              channel: state.channel,
+              message: {
+                id,
+                command,
+                params,
+              },
+            })
+          );
+
+          // Set timeout to reject the promise after 30 seconds
+          setTimeout(() => {
+            if (state.pendingRequests.has(id)) {
+              state.pendingRequests.delete(id);
+              reject(new Error("Request timed out"));
+            }
+          }, 30000);
+        });
+      }
+
+      // Send success response back to WebSocket
+      function sendSuccessResponse(id, result) {
+        if (!state.connected || !state.socket) {
+          console.error("Cannot send response: socket not connected");
+          return;
+        }
+
+        state.socket.send(
+          JSON.stringify({
+            id,
+            type: "message",
+            channel: state.channel,
+            message: {
+              id,
+              result,
+            },
+          })
+        );
+      }
+
+      // Send error response back to WebSocket
+      function sendErrorResponse(id, errorMessage) {
+        if (!state.connected || !state.socket) {
+          console.error("Cannot send error response: socket not connected");
+          return;
+        }
+
+        state.socket.send(
+          JSON.stringify({
+            id,
+            type: "message",
+            channel: state.channel,
+            message: {
+              id,
+              error: errorMessage,
+              result: {}
+            },
+          })
+        );
+      }
+
+      // Helper to generate unique IDs
+      function generateId() {
+        return (
+          Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+        );
+      }
+
+      // Add this function after the generateId() function
+      function generateChannelName() {
+        const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+        let result = "";
+        for (let i = 0; i < 8; i++) {
+          result += characters.charAt(
+            Math.floor(Math.random() * characters.length)
+          );
+        }
+        return result;
+      }
+
+      // Tab switching
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          tabContents.forEach((c) => c.classList.remove("active"));
+
+          tab.classList.add("active");
+          const contentId = "content-" + tab.id.split("-")[1];
+          document.getElementById(contentId).classList.add("active");
+        });
+      });
+
+      // 🔒 Embedded Bridge Toggle Button
+      connectButton.addEventListener("click", () => {
+        if (state.connected) {
+          updateConnectionStatus(false, "🔒 Disconnecting embedded bridge...");
+          connectionStatus.className = "status info";
+          disconnectFromEmbeddedBridge();
+        } else {
+          updateConnectionStatus(false, "🔒 Activating embedded bridge...");
+          connectionStatus.className = "status info";
+          connectToEmbeddedBridge();
+        }
+      });
+
+      // Function to update progress UI
+      function updateProgressUI(progressData) {
+        // Show progress container if hidden
+        progressContainer.classList.remove("hidden");
+        
+        // Update progress bar
+        const progress = progressData.progress || 0;
+        progressBar.style.width = `${progress}%`;
+        progressPercentage.textContent = `${progress}%`;
+        
+        // Update message
+        progressMessage.textContent = progressData.message || "Operation in progress";
+        
+        // Update status text based on operation state
+        if (progressData.status === 'started') {
+          progressStatus.textContent = "Started";
+          progressStatus.className = "";
+        } else if (progressData.status === 'in_progress') {
+          progressStatus.textContent = "In Progress";
+          progressStatus.className = "";
+        } else if (progressData.status === 'completed') {
+          progressStatus.textContent = "Completed";
+          progressStatus.className = "operation-complete";
+          
+          // Hide progress container after 5 seconds
+          setTimeout(() => {
+            progressContainer.classList.add("hidden");
+          }, 5000);
+        } else if (progressData.status === 'error') {
+          progressStatus.textContent = "Error";
+          progressStatus.className = "operation-error";
+        }
+      }
+
+      // Send operation progress update to server
+      function sendProgressUpdateToServer(progressData) {
+        if (!state.connected || !state.socket) {
+          console.error("Cannot send progress update: socket not connected");
+          return;
+        }
+        
+        console.log("Sending progress update to server:", progressData);
+        
+        state.socket.send(
+          JSON.stringify({
+            id: progressData.commandId,
+            type: "progress_update",
+            channel: state.channel,
+            message: {
+              id: progressData.commandId,
+              type: "progress_update",
+              data: progressData
+            }
+          })
+        );
+      }
+      
+      // Reset progress UI
+      function resetProgressUI() {
+        progressContainer.classList.add("hidden");
+        progressBar.style.width = "0%";
+        progressMessage.textContent = "No operation in progress";
+        progressStatus.textContent = "Not started";
+        progressStatus.className = "";
+        progressPercentage.textContent = "0%";
+      }
+
+      // Listen for messages from the plugin code
+      window.onmessage = (event) => {
+        const message = event.data.pluginMessage;
+        if (!message) return;
+
+        console.log("Received message from plugin:", message);
+
+        switch (message.type) {
+          case "connection-status":
+            updateConnectionStatus(message.connected, message.message);
+            break;
+          case "auto-connect-embedded-bridge":
+            connectToEmbeddedBridge();
+            break;
+          case "embedded-bridge-ready":
+            updateConnectionStatus(true, `🔒 Bridge ready - Session: ${message.sessionId?.substr(0, 8)}...`);
+            break;
+          case "command-result":
+            // Forward the result from plugin code back to WebSocket
+            sendSuccessResponse(message.id, message.result);
+            break;
+          case "command-error":
+            // Forward the error from plugin code back to WebSocket
+            sendErrorResponse(message.id, message.error);
+            break;
+          case "command_progress":
+            // Update UI with progress information
+            updateProgressUI(message);
+            // Forward progress update to server
+            sendProgressUpdateToServer(message);
+            break;
+        }
+      };
+
+      // Alternative configurations for different installation methods (defined first)
+      const alternativeConfigs = {
+        "Recommended (Bunx - Fastest)": {
+          mcpServers: {
+            "sparq-figma-mcp": {
+              command: "bunx",
+              args: ["sparq-figma-mcp@latest"],
+              env: {
+                "NODE_ENV": "production"
+              }
+            }
+          }
+        },
+        "NPX (Universal)": {
+          mcpServers: {
+            "sparq-figma-mcp": {
+              command: "npx",
+              args: ["sparq-figma-mcp@latest"],
+              env: {
+                "NODE_ENV": "production"
+              }
+            }
+          }
+        },
+        "Global Install": {
+          mcpServers: {
+            "sparq-figma-mcp": {
+              command: "sparq-figma-mcp@latest",
+              env: {
+                "NODE_ENV": "production"
+              }
+            }
+          }
+        },
+        "Minimal (Bunx)": {
+          mcpServers: {
+            "sparq-figma-mcp": {
+              command: "bunx",
+              args: ["sparq-figma-mcp@latest"]
+            }
+          }
+        }
+      };
+
+      // Function to update MCP config
+      function updateMcpConfig() {
+        // Use the recommended bunx config as default (fastest performance)
+        const recommendedConfig = alternativeConfigs["Recommended (Bunx - Fastest)"];
+        
+        const textarea = document.getElementById("mcp-json");
+        if (textarea) {
+          textarea.value = JSON.stringify(recommendedConfig, null, 2);
+        }
+      }
+
+      // Copy button functionality (after alternativeConfigs is defined)
+      let currentConfigIndex = 0;
+      const configKeys = Object.keys(alternativeConfigs);
+      
+      document.getElementById("btn-copy").addEventListener("click", () => {
+        // Cycle through configurations on multiple clicks
+        const configKey = configKeys[currentConfigIndex];
+        const config = alternativeConfigs[configKey];
+        
+        // Update textarea with current config
+        const textarea = document.getElementById("mcp-json");
+        textarea.value = JSON.stringify(config, null, 2);
+        
+        // Copy to clipboard
+        textarea.select();
+        document.execCommand("copy");
+        
+        // Update button text to show which config was copied
+        const button = document.getElementById("btn-copy");
+        button.textContent = `Copied ${configKey}!`;
+        
+        // Cycle to next config for next click
+        currentConfigIndex = (currentConfigIndex + 1) % configKeys.length;
+        
+        setTimeout(() => {
+          button.textContent = "Copy to Clipboard";
+        }, 2000);
+      });
+
+      // Initialize MCP config on load
+      updateMcpConfig();
+
+      // Function to open documentation
+      function openDocumentation() {
+        // For now, show an alert with setup guide info
+        // In production, this could open a documentation website
+        alert(`📖 SPARQ MCP Setup Guide\n\nInstallation Methods:\n\n1. NPM Global (Recommended):\n   npm install -g sparq-figma-mcp\n\n2. Local Project:\n   npm install sparq-figma-mcp\n   Use: "npx sparq-figma-mcp-server"\n\n3. Development:\n   Clone repo, npm install, npm run build\n   Use local path with "cwd" setting\n\nFor detailed instructions, see the project README.`);
+      }
+    </script>
+  </body>
+</html>

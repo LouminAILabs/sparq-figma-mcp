@@ -1,0 +1,19 @@
+{
+  "name": "SPARQ Figma MCP Plugin",
+  "id": "sparq-figma-mcp-2025",
+  "api": "1.0.0",
+  "editorType": ["figma", "figjam", "dev"],
+  "main": "code.js",
+  "ui": "ui.html",
+  "capabilities": ["inspect"],
+  "menu": [
+    {
+      "name": "Connect to Cursor AI",
+      "command": "connect"
+    }
+  ],
+  "permissions": [
+    "currentuser",
+    "activeusers"
+  ]
+}
