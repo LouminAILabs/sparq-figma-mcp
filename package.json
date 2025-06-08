@@ -1,21 +1,56 @@
 {
-  "name": "sparq-figma-mcp-dev",
-  "description": "SPARQ Figma MCP - Local Development Version",
+  "name": "sparq-figma-mcp",
+  "description": "🚀 SPARQ Figma MCP Plugin - Secure embedded bridge for Cursor IDE to Figma integration with zero network exposure and encrypted IPC communication",
   "version": "1.0.0",
+  "keywords": [
+    "figma",
+    "mcp",
+    "cursor",
+    "ide",
+    "plugin",
+    "design",
+    "automation",
+    "secure",
+    "bridge",
+    "ipc",
+    "sparq",
+    "model-context-protocol"
+  ],
+  "homepage": "https://github.com/LouminAILabs/sparq-figma-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LouminAILabs/sparq-figma-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LouminAILabs/sparq-figma-mcp/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "LouminAI Labs",
+    "url": "https://github.com/LouminAILabs"
+  },
   "module": "dist/server.js",
   "main": "dist/server.js",
+  "types": "dist/server.d.ts",
   "bin": {
-    "sparq-figma-mcp-dev": "dist/server.js"
+    "sparq-figma-mcp": "dist/server.js"
   },
   "files": [
-    "dist",
-    "README.md"
+    "dist/**/*",
+    "src/cursor_mcp_plugin/**/*",
+    "scripts/package-plugin.js",
+    "scripts/package-figma-plugin.ts",
+    "README.md",
+    "UAT_DEPLOYMENT_GUIDE.md",
+    "QUICK_DEPLOYMENT_REFERENCE.md",
+    "LICENSE"
   ],
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "start": "bun run dist/server.js",
-    "socket": "bun run src/socket.ts",
-    "setup": "./scripts/setup.sh",
+    "start": "node dist/server.js",
     "build": "tsup",
     "build:watch": "tsup --watch",
     "dev": "bun run build:watch",
@@ -25,7 +60,10 @@
     "test:unit": "bun test tests/unit",
     "test:integration": "bun test tests/integration",
     "package:plugin": "node scripts/package-plugin.js",
-    "pub:release": "bun run build && npm publish"
+    "package:figma": "bun run scripts/package-figma-plugin.ts",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run test && npm run build",
+    "publish:npm": "npm run prepublishOnly && npm publish --access public"
   },
   "devDependencies": {
     "@jest/globals": "^30.0.0-beta.3",
