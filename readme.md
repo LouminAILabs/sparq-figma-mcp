@@ -171,6 +171,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Design system automation
 - [ ] Team collaboration features
 
+## ☕ Support Development
+
+If SPARQ Figma MCP Plugin has helped streamline your design workflow, consider supporting its continued development:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/thedavidyoungblood)
+
+Your support helps maintain and improve SPARQ tools for the design automation community.
+
 ---
 
 **Made with ❤️ by [LouminAI Labs](https://github.com/LouminAILabs)**
