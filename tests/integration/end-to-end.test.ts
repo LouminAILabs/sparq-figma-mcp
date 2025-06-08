@@ -105,7 +105,7 @@ describe("MCP Server - End-to-End Integration", () => {
     it("should be configured for production deployment", () => {
       // Check package.json version
       const packageJson = require("../../package.json");
-      expect(packageJson.version).toBe("1.0.0");
+      expect(packageJson.version).toBe("1.0.1");
       expect(packageJson.name).toBe("sparq-figma-mcp");
     });
 

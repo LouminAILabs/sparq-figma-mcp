@@ -1,7 +1,7 @@
 {
   "name": "sparq-figma-mcp",
   "description": "🚀 SPARQ Figma MCP Plugin - Secure embedded bridge for Cursor IDE to Figma integration with zero network exposure and encrypted IPC communication",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "keywords": [
     "figma",
     "mcp",
